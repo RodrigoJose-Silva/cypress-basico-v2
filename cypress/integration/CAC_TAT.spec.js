@@ -189,4 +189,76 @@ describe('Central de Atendimento ao Cliente TAT', function () {
         cy.get('span[class="error"]')
             .should('have.contain', 'Valide os campos obrigatórios!')
     })
+
+    it('seleciona um produto (YouTube) por seu texto', function () {
+        cy.get('#product')
+            .select('YouTube')
+            .should('have.value', 'youtube')
+    })
+
+    it('seleciona um produto (Blog) por seu índice', function () {
+        cy.get('#product')
+            .select(1)
+            .should('have.value', 'blog')
+    })
+
+    it('seleciona um produto (Mentoria) por seu valor (value)', function () {
+        const produto = 'mentoria';
+
+        cy.get('#product')
+            .select(produto)
+            .should('have.value', produto)
+    })
+
+    it('marca o tipo de atendimento "Feedback', function() {
+        cy.get('input[value="feedback"]')
+            .check()
+            .should('have.value', 'feedback')
+        })
+
+    it('marca cada tipo de atendimento', function() {
+        cy.get('input[type="radio"]')
+            .should('have.length', 3)
+            .each(function($radio) {
+                cy.wrap($radio).check()
+            })
+    })
+
+    it('marca ambos checkboxes, depois desmarca o último', function() {
+        cy.get('input[type="checkbox"]')
+            .check()
+            .should('be.checked')
+            .last()
+            .uncheck()
+            .should('not.be.checked')
+    })
+
+    it('seleciona um arquivo da pasta fixtures', function() {
+        cy.get('#file-upload')
+            .should('not.have.value')
+            .selectFile('cypress/fixtures/example.json')
+            .then(input => {
+                expect(input[0].files[0].name).to.equals('example.json')
+            })
+    })
+
+    it('seleciona um arquivo simulando um drag-and-drop', function() {
+        cy.get('#file-upload')
+            .should('not.have.value')
+            .selectFile('cypress/fixtures/example.json', {action: "drag-drop"}) // ação qeu simula arrastar um arquivo no local de upload
+            .should(input => {
+                expect(input[0].files[0].name).to.equals('example.json')
+            })
+    })
+    
+    it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', function() {
+        cy.fixture('example.json').as('example')
+
+        cy.get('#file-upload')
+            .should('not.have.value')
+            .selectFile('@example')
+            .should(function($input) {
+                expect($input[0].files[0].name).to.equals('example.json')
+            })
+    })
 })
