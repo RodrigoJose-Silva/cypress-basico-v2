@@ -261,4 +261,22 @@ describe('Central de Atendimento ao Cliente TAT', function () {
                 expect($input[0].files[0].name).to.equals('example.json')
             })
     })
+
+    it('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', function() {
+        cy.contains('a', 'Política de Privacidade')
+            .should('have.attr', 'target', '_blank')
+    })
+
+    it('acessa a página da política de privacidade removendo o target e então clicanco no link', function() {
+        cy.contains('a', 'Política de Privacidade')
+            .invoke('removeAttr', 'target') //anula a função da page abrir em outra aba
+            .click()
+        
+        cy.contains('Talking About Testing')
+            .should('be.visible')
+    })
+
+    it('', function() {
+
+    })
 })
