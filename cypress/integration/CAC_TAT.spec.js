@@ -2,7 +2,10 @@
 
 describe('Central de Atendimento ao Cliente TAT', function () {
 
+    const THREE_SECONDS_IN_MS = 3000
+
     beforeEach(function () {
+
         //acessando a aplicação local
         cy.visit('./src/index.html')
     })
@@ -17,6 +20,8 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     })
 
     it('preenche os campos obrigatórios e envia o formulário', function () {
+        cy.clock()
+        
         //preenchendo o campo nome
         cy.get('#firstName')
             .should('be.visible')
@@ -46,11 +51,19 @@ describe('Central de Atendimento ao Cliente TAT', function () {
         //validando a exibição da msg de sucesso
         cy.get('span[class="success"]')
             .should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.contains('.success', 'Mensagem enviada com sucesso')
+            .should('not.be.visible') // verificação de que a mensagem de sucessso não está mais visível
     })
 
     it('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', function () {
 
+
         const longText = 'Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! Teste de preenchimento do campo com sucesso!!! '
+
+        cy.clock()
 
         //preenchendo o campo nome
         cy.get('#firstName')
@@ -81,9 +94,17 @@ describe('Central de Atendimento ao Cliente TAT', function () {
         //validando a exibição da msg de sucesso
         cy.get('span[class="error"]')
             .should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.contains('span[class="error"]', 'Valide os campos obrigatórios!')
+            .should('not.be.visible') // verificação de que a mensagem de sucessso não está mais visível
     })
 
     it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function () {
+
+        cy.clock()
+
         //preenchendo o campo nome
         cy.get('#firstName')
             .should('be.visible')
@@ -118,6 +139,11 @@ describe('Central de Atendimento ao Cliente TAT', function () {
         //validando a exibição da msg de sucesso
         cy.get('span[class="error"]')
             .should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.contains('span[class="error"]', 'Valide os campos obrigatórios!')
+            .should('not.be.visible') // verificação de que a mensagem de sucessso não está mais visível
     })
 
     it('campo de telefone continua vazio quando preenchido com dados não-numéricos', function () {
@@ -161,6 +187,8 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     })
 
     it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', function () {
+        cy.clock()
+
         //submetendo o formulário
         cy.get('button[type="submit"]')
             .should('be.visible')
@@ -169,17 +197,31 @@ describe('Central de Atendimento ao Cliente TAT', function () {
         //validando a exibição da msg de sucesso
         cy.get('span[class="error"]')
             .should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.contains('span[class="error"]', 'Valide os campos obrigatórios!')
+            .should('not.be.visible') // verificação de que a mensagem de sucessso não está mais visível
     })
 
     it('envia o formulario com sucesso usando um comando customizado', function () {
         cy.fillMadatoryFieldsAndSubmit() //utilizando o comando customizado pelo arquivo "commands.js"
 
+        cy.clock()
+
         //validando a exibição da msg de sucesso
-        cy.get('span[class="error"]')
+        cy.get('span[class="success"]')
             .should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('span[class="success"]')
+        .should('not.be.visible')
     })
 
     it('utilizando a função "cy.contains"', function () {
+        cy.clock()
+
         //submetendo o formulário
         cy.contains('button', 'Enviar')
             .should('be.visible')
@@ -188,6 +230,12 @@ describe('Central de Atendimento ao Cliente TAT', function () {
         //validando a exibição da msg de sucesso
         cy.get('span[class="error"]')
             .should('have.contain', 'Valide os campos obrigatórios!')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('span[class="error"]')
+            .should('not.be.visible')
+
     })
 
     it('seleciona um produto (YouTube) por seu texto', function () {
@@ -210,21 +258,21 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             .should('have.value', produto)
     })
 
-    it('marca o tipo de atendimento "Feedback', function() {
+    it('marca o tipo de atendimento "Feedback', function () {
         cy.get('input[value="feedback"]')
             .check()
             .should('have.value', 'feedback')
-        })
+    })
 
-    it('marca cada tipo de atendimento', function() {
+    it('marca cada tipo de atendimento', function () {
         cy.get('input[type="radio"]')
             .should('have.length', 3)
-            .each(function($radio) {
+            .each(function ($radio) {
                 cy.wrap($radio).check()
             })
     })
 
-    it('marca ambos checkboxes, depois desmarca o último', function() {
+    it('marca ambos checkboxes, depois desmarca o último', function () {
         cy.get('input[type="checkbox"]')
             .check()
             .should('be.checked')
@@ -233,7 +281,7 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             .should('not.be.checked')
     })
 
-    it('seleciona um arquivo da pasta fixtures', function() {
+    it('seleciona um arquivo da pasta fixtures', function () {
         cy.get('#file-upload')
             .should('not.have.value')
             .selectFile('cypress/fixtures/example.json')
@@ -242,41 +290,38 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             })
     })
 
-    it('seleciona um arquivo simulando um drag-and-drop', function() {
+    it('seleciona um arquivo simulando um drag-and-drop', function () {
         cy.get('#file-upload')
             .should('not.have.value')
-            .selectFile('cypress/fixtures/example.json', {action: "drag-drop"}) // ação qeu simula arrastar um arquivo no local de upload
+            .selectFile('cypress/fixtures/example.json', { action: "drag-drop" }) // ação qeu simula arrastar um arquivo no local de upload
             .should(input => {
                 expect(input[0].files[0].name).to.equals('example.json')
             })
     })
-    
-    it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', function() {
+
+    it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', function () {
         cy.fixture('example.json').as('example')
 
         cy.get('#file-upload')
             .should('not.have.value')
             .selectFile('@example')
-            .should(function($input) {
+            .should(function ($input) {
                 expect($input[0].files[0].name).to.equals('example.json')
             })
     })
 
-    it('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', function() {
+    it('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', function () {
         cy.contains('a', 'Política de Privacidade')
             .should('have.attr', 'target', '_blank')
     })
 
-    it('acessa a página da política de privacidade removendo o target e então clicanco no link', function() {
+    it('acessa a página da política de privacidade removendo o target e então clicanco no link', function () {
         cy.contains('a', 'Política de Privacidade')
             .invoke('removeAttr', 'target') //anula a função da page abrir em outra aba
             .click()
-        
+
         cy.contains('Talking About Testing')
             .should('be.visible')
     })
 
-    it('', function() {
-
-    })
 })

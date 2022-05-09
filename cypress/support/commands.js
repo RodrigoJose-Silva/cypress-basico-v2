@@ -37,7 +37,7 @@ Cypress.Commands.add('fillMadatoryFieldsAndSubmit', function () {
     //preenchendo o campo e-mail
     cy.get('#email')
         .should('be.visible')
-        .type('qatest#gmail.com')
+        .type('qatest@gmail.com')
 
     //preenchendo o campo "Como podemos te ajudar"
     cy.get('#open-text-area')
