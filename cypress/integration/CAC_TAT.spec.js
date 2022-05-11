@@ -351,4 +351,11 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             .invoke('val', longText)
             .should('have.value', longText)
     })
+
+    it.only('desafio - encontra o gato escondido', function() {
+        cy.get('#cat')
+            .should('not.be.visible')
+            .invoke('show')
+            .should('be.visible')
+    })
 })
